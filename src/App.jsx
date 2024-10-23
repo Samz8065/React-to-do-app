@@ -5,50 +5,68 @@ import TodoList from "./components/TodoList";
 function App() {
   const [todos, setTodos] = useState([]);
   const [todoValue, setTodoValue] = useState("");
+  const [editIndex, setEditIndex] = useState(null);
 
-  function persistData(newList){
-    localStorage.setItem('todos', JSON.stringify({todos: newList}))
+  function persistData(newList) {
+    localStorage.setItem("todos", JSON.stringify({ todos: newList }));
   }
 
-  function handleAddTodos(newTodo){
-    const newTodoList = [...todos, newTodo]
-    persistData(newTodoList)
-    setTodos(newTodoList)
-  }
-  
-
-  function handleDeleteTodos(index){
-    const newTodoList = todos.filter((todo, todoIndex)=>{
-      return todoIndex!== index
-    })
-    persistData(newTodoList)
-
-    setTodos(newTodoList)
-  }
-
-  function handleEditTodos(index){
-    const valueToEdit= todos[index]
-    setTodoValue(valueToEdit)
-    handleDeleteTodos(index)
-  }
-
-  useEffect(()=>{
-    if(!localStorage){
-      return
+  function handleAddTodos(newTodo) {
+    const trimmedTodo = newTodo.trim();
+    if (!trimmedTodo) {
+      return;
     }
-    let localTodos= localStorage.getItem('todos')
-    if(!localTodos){
-      return
+    if (editIndex !== null) {
+      const newTodoList = todos.map((todo, index) =>
+        index === editIndex ? trimmedTodo : todo
+      );
+      setTodos(newTodoList);
+      persistData(newTodoList);
+      setEditIndex(null);
+    } else {
+      const newTodoList = [...todos, trimmedTodo];
+      setTodos(newTodoList);
+      persistData(newTodoList);
     }
-    localTodos = JSON.parse(localTodos).todos
-    setTodos(localTodos)
-  },[])
+    setTodoValue("");
+  }
 
-  
+  function handleDeleteTodos(index) {
+    const newTodoList = todos.filter((_, todoIndex) => todoIndex !== index);
+    setTodos(newTodoList);
+    persistData(newTodoList);
+  }
+
+  function handleEditTodos(index) {
+    const valueToEdit = todos[index];
+    setTodoValue(valueToEdit);
+    setEditIndex(index);
+  }
+
+  useEffect(() => {
+    if (!localStorage) {
+      return;
+    }
+    let localTodos = localStorage.getItem("todos");
+    if (!localTodos) {
+      return;
+    }
+    localTodos = JSON.parse(localTodos).todos;
+    setTodos(localTodos);
+  }, []);
+
   return (
     <>
-      <TodoInput todoValue={todoValue} setTodoValue={setTodoValue} handleAddTodos={handleAddTodos}/>
-      <TodoList handleDeleteTodos={handleDeleteTodos} handleEditTodos={handleEditTodos}  todos={todos} />
+      <TodoInput
+        todoValue={todoValue}
+        setTodoValue={setTodoValue}
+        handleAddTodos={handleAddTodos}
+      />
+      <TodoList
+        handleDeleteTodos={handleDeleteTodos}
+        handleEditTodos={handleEditTodos}
+        todos={todos}
+      />
     </>
   );
 }

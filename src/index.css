@@ -1,9 +1,12 @@
 * {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Fjord One', sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   color: #202124;
+  font-weight: bold;
+  font-size: large;
+  letter-spacing: .1rem;
 }
 
 h1,
@@ -19,7 +22,7 @@ button {
   display: flex;
   flex-direction: column;
   padding: 14px;
-  background: #eff6ff;
+  background: #1c1f62;
   gap: 14px;
 }
 
